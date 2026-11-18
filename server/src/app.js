@@ -1,21 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const connectDB = require("./config/db");
 
 const app = express();
 
-// Security & Logging Middlewares
 app.use(helmet());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(express.json());
 
-// CORS Configuration (Accepts localhost & live Vercel frontend)
-const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.CLIENT_URL,
-].filter(Boolean);
+const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL].filter(
+  Boolean,
+);
 
 app.use(
   cors({
@@ -23,29 +21,40 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
-  })
+  }),
 );
 
-// Health Check Endpoint
-app.get('/api/health', (req, res) => {
-  const dbStates = {
-    0: 'Disconnected',
-    1: 'Connected',
-    2: 'Connecting',
-    3: 'Disconnecting',
-  };
+// ضمان الاتصال بـ MongoDB مع كل Request على Vercel
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+      error: err.message,
+    });
+  }
+});
 
-  const dbStatus = dbStates[mongoose.connection.readyState] || 'Unknown';
+app.get("/api/health", (req, res) => {
+  const dbStates = {
+    0: "Disconnected",
+    1: "Connected",
+    2: "Connecting",
+    3: "Disconnecting",
+  };
 
   res.status(200).json({
     success: true,
-    message: 'School HR API is running',
+    message: "School HR API is running",
     environment: process.env.NODE_ENV,
-    database: dbStatus,
+    database: dbStates[mongoose.connection.readyState] || "Unknown",
     timestamp: new Date().toISOString(),
   });
 });
