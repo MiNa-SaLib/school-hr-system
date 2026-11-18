@@ -1,0 +1,8 @@
+@localUrl = http://localhost:5000/api
+@liveUrl = https://your-render-app.onrender.com/api
+
+### 1. Test Local Health
+GET {{localUrl}}/health
+
+### 2. Test Live Health
+GET {{liveUrl}}/health
