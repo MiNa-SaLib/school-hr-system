@@ -1,19 +1,23 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const morgan = require("morgan");
-const mongoose = require("mongoose");
-const connectDB = require("./config/db");
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const connectDB = require('./config/db');
+
+const authRoutes = require('./routes/authRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
 
 const app = express();
 
 app.use(helmet());
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 app.use(express.json());
 
-const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL].filter(
-  Boolean,
-);
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL,
+].filter(Boolean);
 
 app.use(
   cors({
@@ -21,14 +25,14 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
-  }),
+  })
 );
 
-// ضمان الاتصال بـ MongoDB مع كل Request على Vercel
+// Ensure DB connection before any request (Vercel Serverless safe)
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -36,27 +40,32 @@ app.use(async (req, res, next) => {
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: "Database connection failed",
+      message: 'Database connection failed',
       error: err.message,
     });
   }
 });
 
-app.get("/api/health", (req, res) => {
+// Health Check
+app.get('/api/health', (req, res) => {
   const dbStates = {
-    0: "Disconnected",
-    1: "Connected",
-    2: "Connecting",
-    3: "Disconnecting",
+    0: 'Disconnected',
+    1: 'Connected',
+    2: 'Connecting',
+    3: 'Disconnecting',
   };
 
   res.status(200).json({
     success: true,
-    message: "School HR API is running",
+    message: 'School HR API is running',
     environment: process.env.NODE_ENV,
-    database: dbStates[mongoose.connection.readyState] || "Unknown",
+    database: dbStates[mongoose.connection.readyState] || 'Unknown',
     timestamp: new Date().toISOString(),
   });
 });
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/employees', employeeRoutes);
 
 module.exports = app;
