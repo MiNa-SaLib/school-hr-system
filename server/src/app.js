@@ -15,8 +15,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  process.env.CLIENT_URL?.replace(/\/$/, ""),
 ].filter(Boolean);
 
 app.use(
@@ -32,7 +32,6 @@ app.use(
   })
 );
 
-// Ensure DB connection before any request (Vercel Serverless safe)
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -46,7 +45,6 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Health Check
 app.get('/api/health', (req, res) => {
   const dbStates = {
     0: 'Disconnected',
@@ -64,7 +62,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 

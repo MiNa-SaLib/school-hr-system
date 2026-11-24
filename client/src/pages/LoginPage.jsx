@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Building2, LogIn } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { Building2, LogIn } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('hr@alnoor.edu');
+  const [email, setEmail] = useState('wael@wezayed.edu');
   const [password, setPassword] = useState('123456');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -110,19 +110,20 @@ export default function LoginPage() {
               type="button"
               className="btn btn-outline"
               style={{ fontSize: '12px', padding: '8px' }}
-              onClick={() => quickLogin('hr@alnoor.edu')}
+              onClick={() => quickLogin('wael@wezayed.edu')}
               disabled={submitting}
             >
-              مدرسة النور الدولية
+              We Zayed school 
             </button>
             <button
               type="button"
               className="btn btn-outline"
               style={{ fontSize: '12px', padding: '8px' }}
-              onClick={() => quickLogin('hr@leaders.edu')}
+              onClick={() => quickLogin('mina@weminia.edu')}
               disabled={submitting}
             >
-              أكاديمية الرواد
+
+              We minia school 
             </button>
           </div>
         </div>

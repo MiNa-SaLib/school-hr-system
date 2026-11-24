@@ -18,6 +18,11 @@ const employeeSchema = new mongoose.Schema(
       required: [true, 'Full name is required'],
       trim: true,
     },
+    nationalId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     email: {
       type: String,
       lowercase: true,
@@ -25,6 +30,16 @@ const employeeSchema = new mongoose.Schema(
       default: '',
     },
     phone: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    address: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    qualification: {
       type: String,
       trim: true,
       default: '',
@@ -39,6 +54,16 @@ const employeeSchema = new mongoose.Schema(
       required: [true, 'Job title is required'],
       trim: true,
     },
+    subject: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    stage: {
+      type: String,
+      enum: ['KG', 'Primary', 'Prep', 'Secondary', 'General'],
+      default: 'General',
+    },
     employmentType: {
       type: String,
       enum: ['Full-Time', 'Part-Time', 'Contract'],
@@ -49,6 +74,11 @@ const employeeSchema = new mongoose.Schema(
       required: [true, 'Base salary is required'],
       min: 0,
     },
+    leaveBalance: {
+      type: Number,
+      default: 21,
+      min: 0,
+    },
     hireDate: {
       type: Date,
       default: Date.now,
@@ -57,6 +87,11 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       enum: ['Active', 'On Leave', 'Terminated'],
       default: 'Active',
+    },
+    notes: {
+      type: String,
+      trim: true,
+      default: '',
     },
   },
   { timestamps: true }
